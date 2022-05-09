@@ -25,12 +25,12 @@ function getTeamsInAlliance(match, alliance) {
   return match.alliances[alliance].team_keys;
 }
 
-function getAllMatrices() {
+function getAllMatrices(category) {
   let teamMatrix = [];
   let scoreMatrix = [];
   let allTeams = findAllTeams();
   let map = getTeamsIndex(allTeams);
-  for (let match of data) {
+  for (let match of data.filter(item => item.comp_level === "qm")) {
     for (let alliance of ["blue", "red"]) {
       let teams = getTeamsInAlliance(match, alliance);
       let row = new Array(allTeams.length).fill(0);
@@ -39,14 +39,14 @@ function getAllMatrices() {
         row[teamIndex] = 1;
       }
       teamMatrix.push(row);
-      scoreMatrix.push(match.score_breakdown[alliance].totalPoints);
+      scoreMatrix.push(match.score_breakdown[alliance][category]);
     }
   }
   return [teamMatrix, scoreMatrix];
 }
 
 function calculateOPR(teamCode) {
-  let [teamMatrix, scoreMatrix] = getAllMatrices();
+  let [teamMatrix, scoreMatrix] = getAllMatrices("teleopCargoTotal");
 
   let teamsTransposed = math.transpose(teamMatrix);
   let normalTeams = math.multiply(teamsTransposed, teamMatrix);
