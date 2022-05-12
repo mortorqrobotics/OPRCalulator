@@ -1,13 +1,13 @@
-const calculateOPR = require('./oprcalc')
-const matchdata = require('./matchdata.json')
-const oprs = require('./oprs.json')
+(async () => {
+    console.log(await require('../bluealliance').getAllEvents("2022cala"))
+})()
 
-let value = calculateOPR();
-console.log(value)
+// let value = calculateOPR("teleopCargoTotal");
+// console.log(value)
 
-console.log(value.frc1515.toFixed(2))
-console.log(value.frc4.toFixed(2))
-console.log(value.frc3476.toFixed(2))
+// console.log(value.frc1515.toFixed(2))
+// console.log(value.frc4.toFixed(2))
+// console.log(value.frc3476.toFixed(2))
 
 // console.log(value.frc1515.toFixed(2) === oprs.oprs.frc1515.toFixed(2), `our: ${value.frc1515}, blue: ${oprs.dprs.frc1515}`);
 // console.log(value.frc4.toFixed(2) === oprs.oprs.frc4.toFixed(2), `our: ${value.frc4}, blue: ${oprs.dprs.frc4}`);

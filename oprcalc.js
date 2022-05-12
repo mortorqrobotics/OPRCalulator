@@ -1,5 +1,11 @@
-const data = require("./matchdata.json");
 const math = require("mathjs");
+const getMatchData = require("./bluealliance").getMatchData;
+
+let data = [];
+
+async function updateData(eventKey) {
+  data = await getMatchData(eventKey);
+}
 
 function findAllTeams() {
   let teams = new Set();
@@ -45,8 +51,9 @@ function getAllMatrices(category) {
   return [teamMatrix, scoreMatrix];
 }
 
-function calculateOPR(teamCode) {
-  let [teamMatrix, scoreMatrix] = getAllMatrices("teleopCargoTotal");
+async function calculateOPR(category, eventKey) {
+  await updateData(eventKey)
+  let [teamMatrix, scoreMatrix] = getAllMatrices(category);
 
   let teamsTransposed = math.transpose(teamMatrix);
   let normalTeams = math.multiply(teamsTransposed, teamMatrix);

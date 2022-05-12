@@ -1,0 +1,29 @@
+body {
+    background-color: #f0feff;
+}
+
+form {
+    display: flex;
+    width: 80%;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 20vh;
+}
+
+input {
+    width: 10%;
+    height: 20px;
+    border-radius: 5px;
+}
+
+button {
+    border-radius: 3px;
+}
+
+p {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-top: 5vh;
+}
