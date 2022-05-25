@@ -1,5 +1,5 @@
 const math = require("mathjs");
-const getMatchData = require("./bluealliance").getMatchData;
+const { getMatchData, getClimbPoints } = require("./bluealliance");
 
 let data = [];
 
@@ -52,6 +52,9 @@ function getAllMatrices(category) {
 }
 
 async function calculateOPR(category, eventKey) {
+  if(category === "climbPoints") {
+    return await getClimbPoints(eventKey);
+  }
   await updateData(eventKey)
   let [teamMatrix, scoreMatrix] = getAllMatrices(category);
 

@@ -1,5 +1,5 @@
 (async () => {
-    console.log(await require('../bluealliance').getAllEvents("2022cala"))
+    await require('../bluealliance').getClimbPoints("2022cave")
 })()
 
 // let value = calculateOPR("teleopCargoTotal");

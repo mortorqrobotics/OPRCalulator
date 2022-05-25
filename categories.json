@@ -4,6 +4,7 @@
     "teleopCargoTotal",
     "teleopCargoPoints",
     "matchCargoTotal",
+    "climbPoints",
     "totalPoints",
     "foulCount",
     "foulPoints",
