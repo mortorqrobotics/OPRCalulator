@@ -1,6 +1,9 @@
 const { default: axios } = require("axios");
-const { TBAKey } = require('./config.json')
 const categories = require('./categories.json')
+require('dotenv').config();
+
+const TBAKey = process.env.TBA_KEY || require('./config.json').TBAKey;
+let data = [];
 
 async function getMatchData(eventKey) {
     let data = await axios.get(`https://www.thebluealliance.com/api/v3/event/${eventKey}/matches`, {
@@ -8,6 +11,7 @@ async function getMatchData(eventKey) {
             "X-TBA-Auth-Key": TBAKey
         }
     })
+    
     return data.data;
 }
 
@@ -49,31 +53,9 @@ function mostCommon(arr){
     ).pop();
 }
 
-async function getClimbPoints(eventKey) {
-    let data = await getMatchData(eventKey);
-    let organizedTeams = {};
-    for(let match of data.filter(item => item.comp_level === "qm")) {
-        let teams = { "blue": Object.values(match.alliances.blue.team_keys), "red": Object.values(match.alliances.red.team_keys)};
-        for (let alliance of ["blue", "red"]) {
-            let { endgameRobot1, endgameRobot2, endgameRobot3 } = match.score_breakdown[alliance]
-            let endGameScores = [endgameRobot1, endgameRobot2, endgameRobot3];
-            teams[alliance].forEach((team, i) => {
-                if(!organizedTeams.hasOwnProperty(team)) {
-                    organizedTeams[team] = [];
-                }
-                organizedTeams[team].push(endGameScores[i])
-            })
-        }
-    }
-    let averageTeam = {}
-    for(const [team, climbs] of Object.entries(organizedTeams)) {
-        averageTeam[team] = climbPointsMap[mostCommon(climbs)];
-    }
-    return averageTeam;
-}
-
 module.exports.getMatchData = getMatchData;
 module.exports.getAllTeams = getAllTeams;
 module.exports.getAllCategories = getAllCategories;
 module.exports.getAllEvents = getAllEvents;
-module.exports.getClimbPoints = getClimbPoints;
+module.exports.climbPointsMap = climbPointsMap;
+module.exports.mostCommon = mostCommon;
