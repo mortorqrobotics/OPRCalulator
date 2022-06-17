@@ -52,41 +52,50 @@ function getAllMatrices(category) {
 }
 
 async function calculateOPR(category, eventKey) {
-  if (category === "climbPoints") {
-    return await getClimbPoints(eventKey);
+  try {
+    if (category === "climbPoints") {
+      return await getClimbPoints(eventKey);
+    }
+    await updateData(eventKey);
+    let [teamMatrix, scoreMatrix] = getAllMatrices(category);
+
+    let teamsTransposed = math.transpose(teamMatrix);
+    let normalTeams = math.multiply(teamsTransposed, teamMatrix);
+    let normalScores = math.multiply(teamsTransposed, scoreMatrix);
+
+    let oprs = math.multiply(math.inv(normalTeams), normalScores);
+    let formatted = {};
+
+    let allTeams = findAllTeams();
+    oprs.forEach((opr, i) => {
+      formatted[allTeams[i]] = opr;
+    });
+  } catch (e) {
+    return {};
   }
-  await updateData(eventKey);
-  let [teamMatrix, scoreMatrix] = getAllMatrices(category);
 
-  let teamsTransposed = math.transpose(teamMatrix);
-  let normalTeams = math.multiply(teamsTransposed, teamMatrix);
-  let normalScores = math.multiply(teamsTransposed, scoreMatrix);
-
-  let oprs = math.multiply(math.inv(normalTeams), normalScores);
-  let formatted = {};
-
-  let allTeams = findAllTeams();
-  oprs.forEach((opr, i) => {
-    formatted[allTeams[i]] = opr;
-  });
   return formatted;
 }
 
 async function getClimbPoints(eventKey) {
   let organizedTeams = {};
   let climbData = data.length === 0 ? await getMatchData(eventKey) : data;
-  for(let match of climbData.filter(item => item.comp_level === "qm")) {
-      let teams = { "blue": Object.values(match.alliances.blue.team_keys), "red": Object.values(match.alliances.red.team_keys)};
-      for (let alliance of ["blue", "red"]) {
-          let { endgameRobot1, endgameRobot2, endgameRobot3 } = match.score_breakdown[alliance]
-          let endGameScores = [endgameRobot1, endgameRobot2, endgameRobot3];
-          teams[alliance].forEach((team, i) => {
-              if(!organizedTeams.hasOwnProperty(team)) {
-                  organizedTeams[team] = [];
-              }
-              organizedTeams[team].push(endGameScores[i])
-          })
-      }
+  for (let match of climbData.filter((item) => item.comp_level === "qm")) {
+    let teams = {
+      blue: Object.values(match.alliances.blue.team_keys),
+      red: Object.values(match.alliances.red.team_keys),
+    };
+    for (let alliance of ["blue", "red"]) {
+      let { endgameRobot1, endgameRobot2, endgameRobot3 } =
+        match.score_breakdown[alliance];
+      let endGameScores = [endgameRobot1, endgameRobot2, endgameRobot3];
+      teams[alliance].forEach((team, i) => {
+        if (!organizedTeams.hasOwnProperty(team)) {
+          organizedTeams[team] = [];
+        }
+        organizedTeams[team].push(endGameScores[i]);
+      });
+    }
   }
   // Gets median score
   // let averageTeam = {}
@@ -96,10 +105,12 @@ async function getClimbPoints(eventKey) {
   // return averageTeam;
 
   //Gets mean score
-  let averageTeam = {}
-  console.log(organizedTeams)
-  for(const [team, climbs] of Object.entries(organizedTeams)) {
-      averageTeam[team] = climbs.map(climb => climbPointsMap[climb]).reduce((a, b) => a + b) / climbs.length;
+  let averageTeam = {};
+  console.log(organizedTeams);
+  for (const [team, climbs] of Object.entries(organizedTeams)) {
+    averageTeam[team] =
+      climbs.map((climb) => climbPointsMap[climb]).reduce((a, b) => a + b) /
+      climbs.length;
   }
   return averageTeam;
 }
