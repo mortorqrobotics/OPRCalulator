@@ -97,7 +97,7 @@ async function getClimbPoints(eventKey) {
       });
     }
   }
-  // Gets median score
+  // Gets mode score
   // let averageTeam = {}
   // for(const [team, climbs] of Object.entries(organizedTeams)) {
   //     averageTeam[team] = climbPointsMap[mostCommon(climbs)];
@@ -106,7 +106,6 @@ async function getClimbPoints(eventKey) {
 
   //Gets mean score
   let averageTeam = {};
-  console.log(organizedTeams);
   for (const [team, climbs] of Object.entries(organizedTeams)) {
     averageTeam[team] =
       climbs.map((climb) => climbPointsMap[climb]).reduce((a, b) => a + b) /
