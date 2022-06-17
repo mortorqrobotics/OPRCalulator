@@ -3,7 +3,6 @@ const categories = require('./categories.json')
 require('dotenv').config();
 
 const TBAKey = process.env.TBA_KEY || require('./config.json').TBAKey;
-let data = [];
 
 async function getMatchData(eventKey) {
     let data = await axios.get(`https://www.thebluealliance.com/api/v3/event/${eventKey}/matches`, {
