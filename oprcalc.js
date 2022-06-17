@@ -70,11 +70,11 @@ async function calculateOPR(category, eventKey) {
     oprs.forEach((opr, i) => {
       formatted[allTeams[i]] = opr;
     });
+
+    return formatted;
   } catch (e) {
     return {};
   }
-
-  return formatted;
 }
 
 async function getClimbPoints(eventKey) {
